@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { useTransition } from "react";
 import { loginWithEmailAndPassword } from "../actions";
 import { AuthTokenResponse } from "@supabase/supabase-js";
+import OAuthForm from "./OAuthForm";
 
 const FormSchema = z.object({
 	email: z.string().email(),
@@ -116,6 +117,7 @@ export default function AuthForm() {
 							})}
 						/>
 					</Button>
+					<OAuthForm />
 				</form>
 			</Form>
 		</div>
