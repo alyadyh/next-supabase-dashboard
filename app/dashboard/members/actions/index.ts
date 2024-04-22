@@ -2,7 +2,7 @@
 
 import { readUserSession } from "@/lib/actions";
 import { createSupbaseAdmin, createSupbaseServerClient } from "@/lib/supabase";
-import { unstable_noStore } from "next/cache";
+import { revalidatePath, unstable_noStore } from "next/cache";
 
 export async function createMember(data: {
 	name: string;
@@ -53,15 +53,42 @@ export async function createMember(data: {
 				member_id: createResult.data.user?.id,
 				status: data.status
 			});
+
+			revalidatePath("/dashboard/members");
 			return JSON.stringify(permissionResult)
 		}
 	}
 
 }
+
 export async function updateMemberById(id: string) {
 	console.log("update member");
 }
-export async function deleteMemberById(id: string) {}
+
+export async function deleteMemberById(user_id: string) {
+	// admin only
+	const {data: userSession} = await readUserSession();
+	if(userSession.session?.user.user_metadata.role != "admin"){
+		return JSON.stringify ({
+			error: {message: "You are not allowed to do this!"
+		}});
+	}
+
+	// delete account
+	const supabaseAdmin = await createSupbaseAdmin();
+	const deleteResult = await supabaseAdmin.auth.admin.deleteUser(user_id)
+
+	if(deleteResult.error?.message){
+		return JSON.stringify(deleteResult)
+	} else {
+		const supabase = await createSupbaseServerClient()
+		const result = await supabase.from("member").delete().eq("id", user_id);
+
+		revalidatePath("/dashboard/members");
+
+		return JSON.stringify(result);
+	}
+}
 
 export async function readMembers() {
 	unstable_noStore();
