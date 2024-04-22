@@ -2,9 +2,10 @@ import React from "react";
 import DailogForm from "./DialogForm";
 import { Button } from "@/components/ui/button";
 import { Pencil1Icon } from "@radix-ui/react-icons";
-import MemberForm from "./TodoForm";
+import TodoForm from "./TodoForm";
+import { ITodo } from "@/lib/types";
 
-export default function EditTodo() {
+export default function EditTodo({todo}: {todo: ITodo}) {
 	return (
 		<DailogForm
 			id="update-trigger"
@@ -15,7 +16,7 @@ export default function EditTodo() {
 					Edit
 				</Button>
 			}
-			form={<MemberForm isEdit={true} />}
+			form={<TodoForm isEdit={true} todo={todo} />}
 		/>
 	);
 }

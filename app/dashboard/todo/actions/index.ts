@@ -24,16 +24,16 @@ export async function updateTodoById(
 	data: {
 		title: string;
 		completed: Boolean;
-	}
-) {
-	console.log("update todo");
+	})
+{
 	const supabase = await createSupbaseServerClient();
 	const result = await supabase.from("daily-todo").update(data).eq("id", id)
 
-	revalidatePath("/dashboard/todo");
+	// revalidatePath("/dashboard/todo");
 	
 	return JSON.stringify(result);
 }
+
 export async function deleteTodoById(id: string) {}
 
 export async function readTodos() {

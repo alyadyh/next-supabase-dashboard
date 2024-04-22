@@ -38,10 +38,7 @@ const FormSchema = z.object({
 	completed: z.boolean(),
 });
 
-export default function TodoForm(
-	{ isEdit }: { isEdit: boolean },
-	{ todo }: { todo: ITodo }
-) {
+export default function TodoForm({isEdit, todo}: {isEdit:boolean, todo:ITodo}) {
 	const [isPending, startTransition] = useTransition()
 	
 	const form = useForm<z.infer<typeof FormSchema>>({
@@ -74,28 +71,15 @@ export default function TodoForm(
 				});
 			}
 		})
-
-		// document.getElementById("create-trigger")?.click();
-
-		// toast({
-		// 	title: "You submitted the following values:",
-		// 	description: (
-		// 		<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-		// 			<code className="text-white">
-		// 				{JSON.stringify(data, null, 2)}
-		// 			</code>
-		// 		</pre>
-		// 	),
-		// });
 	};
 
 	const handleUpdateMember = (data: z.infer<typeof FormSchema>) => {
 		startTransition(async () => {
-			const {error} = JSON.parse(await updateTodoById(todo.member_id, data));
+			const {error} = JSON.parse(await updateTodoById(todo.id, data))
 
 			if(error?.message){
 				toast({
-					title: "Fail to update to-do",
+					title: "Fail to update",
 					description: (
 						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
 							<code className="text-white">
@@ -108,25 +92,10 @@ export default function TodoForm(
 				// updateTodoById("hello");
 				document.getElementById("update-trigger")?.click();
 				toast({
-					title: "Successfully update to-do",
+					title: "Successfully update",
 				});
 			}
-		})
-
-
-		// updateTodoById("hello");
-		// document.getElementById("update-trigger")?.click();
-
-		// toast({
-		// 	title: "You submitted the following values:",
-		// 	description: (
-		// 		<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-		// 			<code className="text-white">
-		// 				{JSON.stringify(data, null, 2)}
-		// 			</code>
-		// 		</pre>
-		// 	),
-		// });
+		});
 	};
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
