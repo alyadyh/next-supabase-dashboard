@@ -2,7 +2,7 @@
 
 import { readUserSession } from "@/lib/actions";
 import { createSupbaseServerClient } from "@/lib/supabase";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_noStore } from "next/cache";
 
 export async function createTodo(
 	data: {
@@ -35,4 +35,10 @@ export async function updateTodoById(
 	return JSON.stringify(result);
 }
 export async function deleteTodoById(id: string) {}
-export async function readTodos() {}
+
+export async function readTodos() {
+	unstable_noStore();
+	const supabase = await createSupbaseServerClient()
+
+	return await supabase.from("daily-todo").select("*")
+}

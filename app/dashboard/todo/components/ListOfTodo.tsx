@@ -4,70 +4,38 @@ import { Button } from "@/components/ui/button";
 import EditTodo from "./EditTodo";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { readTodos } from "../actions";
+import { ITodo } from "@/lib/types";
 
-export default function ListOfTodo() {
-	const todos = [
-		{
-			title: "Subscribe to my channel",
-			status: "completed",
-			created_at: new Date().toDateString(),
-			create_by: "sokheng",
-		},
-		{
-			title: "Subscribe to my channel",
-			status: "completed",
-			created_at: new Date().toDateString(),
-			create_by: "sokheng",
-		},
-		{
-			title: "Subscribe to my channel",
-			status: "completed",
-			created_at: new Date().toDateString(),
-			create_by: "sokheng",
-		},
-	];
+export default async function ListOfTodo() {
+	const { data: todos } = await readTodos();
+
 	return (
 		<div className="dark:bg-inherit bg-white mx-2 rounded-sm">
-			{todos.map((todo, index) => {
+			{(todos as ITodo[])?.map((todo, index) => {
 				return (
 					<div
 						className=" grid grid-cols-5  rounded-sm  p-3 align-middle font-normal "
 						key={index}
-					>
-						{Object.keys(todo).map((key, index) => {
-							if (key === "status") {
-								return (
-									<div
-										key={index}
-										className="flex items-center"
-									>
-										<div>
-											<span
-												className={cn(
-													"  dark:bg-zinc-800 px-2 py-1 rounded-full shadow capitalize  border-[.5px] text-sm",
-													{
-														"border-green-500 bg-green-400 dark:text-green-400":
-															todo.status ===
-															"completed",
-													}
-												)}
-											>
-												{todo.status}
-											</span>
-										</div>
-									</div>
-								);
-							} else {
-								return (
-									<h1
-										className="flex items-center dark:text-white text-lg"
-										key={index}
-									>
-										{todo[key as keyof typeof todo]}
-									</h1>
-								);
-							}
-						})}
+						>
+						<h1>{todo.title}</h1>
+
+						<div>
+						<span
+							className={cn(
+								" dark:bg-zinc-800 px-2 py-1 rounded-full shadow capitalize  border-[.5px] text-sm",
+								{
+									"border-green-500 text-green-600 bg-green-200":
+										todo.completed == true,
+									"border-zinc-300 dark:text-yellow-300 dark:border-yellow-700 px-4 bg-yellow-50":
+										todo.completed == false,
+								}
+							)}
+						>
+							{todo.completed ? `completed` : `on progress`}
+						</span>
+						</div>
+						<h1>{new Date(todo.created_at).toDateString()}</h1>
 
 						<div className="flex gap-2 items-center">
 							<Button
