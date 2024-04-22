@@ -27,6 +27,7 @@ import {
 import { createMember, updateMemberById } from "../../actions";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { cn } from "@/lib/utils";
+import { startTransition, useTransition } from "react";
 
 const FormSchema = z
 	.object({
@@ -49,6 +50,8 @@ const FormSchema = z
 	});
 
 export default function MemberForm() {
+	const [isPending, startTransition] = useTransition()
+
 	const roles = ["admin", "user"];
 	const status = ["active", "resigned"];
 
@@ -63,20 +66,28 @@ export default function MemberForm() {
 	});
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
-		createMember();
+		startTransition(async () => {
+			const result = await createMember(data);
+			const {error} = JSON.parse(result);
 
-		document.getElementById("create-trigger")?.click();
-
-		toast({
-			title: "You submitted the following values:",
-			description: (
-				<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-					<code className="text-white">
-						{JSON.stringify(data, null, 2)}
-					</code>
-				</pre>
-			),
-		});
+			if(error?.message){
+				toast({
+					title: "Fail to create member",
+					description: (
+						<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+							<code className="text-white">
+								{error.message}
+							</code>
+						</pre>
+					),
+				});
+			} else {
+				document.getElementById("create-trigger")?.click();
+				toast({
+					title: "Successfully create member",
+				});
+			}
+		})
 	}
 
 	return (
@@ -233,7 +244,7 @@ export default function MemberForm() {
 				>
 					Submit{" "}
 					<AiOutlineLoading3Quarters
-						className={cn("animate-spin", { hidden: true })}
+						className={cn("animate-spin", { hidden: !isPending })}
 					/>
 				</Button>
 			</form>
