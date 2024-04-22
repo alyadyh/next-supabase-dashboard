@@ -37,6 +37,7 @@ export default async function ListOfTodo() {
 						</span>
 						</div>
 						<h1>{new Date(todo.created_at).toDateString()}</h1>
+						<h1>{todo.completed ? ` ` : ` `}</h1>
 
 						<div className="flex gap-2 items-center">
 							<DeleteTodo id={todo.id} />
