@@ -13,7 +13,8 @@ export async function createMember(data: {
 	confirm: string;
 }) {
 	const {data: userSession} = await readUserSession();
-	if(userSession.session?.user.user_metadata.role != "admin"){
+	if(userSession.session?.user.user_metadata.role != "admin")
+	{
 		return JSON.stringify({
 			error: {message: "You are not allowed to do this!"
 		}});
@@ -32,9 +33,12 @@ export async function createMember(data: {
 		}
 	});
 
-	if(createResult.error?.message){
+	if(createResult.error?.message)
+	{
 		return JSON.stringify(createResult)
-	} else {
+	}
+	else
+	{
 		// create member
 		const memberResult = await supabase
 		.from("member")
@@ -43,9 +47,13 @@ export async function createMember(data: {
 			id: createResult.data.user?.id,
 			email: data.email
 		})
-		if(memberResult.error?.message){
+
+		if(memberResult.error?.message)
+		{
 			return JSON.stringify(memberResult)
-		} else {
+		}
+		else
+		{
 			// create permission
 			const permissionResult = await supabase
 			.from("permission")
@@ -85,7 +93,8 @@ export async function updateMemberAdvanceById(
 	}
 ){
 	const {data: userSession} = await readUserSession();
-	if(userSession.session?.user.user_metadata.role != "admin"){
+	if(userSession.session?.user.user_metadata.role != "admin")
+	{
 		return JSON.stringify({
 			error: {message: "You are not allowed to do this!"
 		}});
@@ -98,9 +107,12 @@ export async function updateMemberAdvanceById(
   		{ user_metadata: { role: data.role } }
 	)
 
-	if (updateResult.error?.message) {
+	if (updateResult.error?.message)
+	{
 		return JSON.stringify(updateResult);
-	} else {
+	}
+	else
+	{
 		const supabase = await createSupbaseServerClient();
 		const result = await supabase.from("permission").update(data).eq("id", permission_id)
 	
@@ -119,7 +131,8 @@ export async function updateMemberAccountById(
 	}
 ){
 	const {data: userSession} = await readUserSession();
-	if(userSession.session?.user.user_metadata.role != "admin"){
+	if(userSession.session?.user.user_metadata.role != "admin")
+	{
 		return JSON.stringify({
 			error: {message: "You are not allowed to do this!"
 		}});
@@ -130,7 +143,8 @@ export async function updateMemberAccountById(
 		password?: string | undefined,
 	} = {email: data.email};
 
-	if(data.password){
+	if(data.password)
+	{
 		updateObject["password"] = data.password;
 	}
 
@@ -141,9 +155,12 @@ export async function updateMemberAccountById(
 		updateObject
 	)
 
-	if(updateResult.error?.message){
+	if(updateResult.error?.message)
+	{
 		return JSON.stringify(updateResult)
-	} else {
+	}
+	else
+	{
 		const supabase = await createSupbaseServerClient()
 		const result = await supabase.from("member").update({email: data.email}).eq("id", user_id);
 
@@ -156,7 +173,8 @@ export async function updateMemberAccountById(
 export async function deleteMemberById(user_id: string) {
 	// admin only
 	const {data: userSession} = await readUserSession();
-	if(userSession.session?.user.user_metadata.role != "admin"){
+	if(userSession.session?.user.user_metadata.role != "admin")
+	{
 		return JSON.stringify ({
 			error: {message: "You are not allowed to do this!"
 		}});
@@ -166,9 +184,12 @@ export async function deleteMemberById(user_id: string) {
 	const supabaseAdmin = await createSupbaseAdmin();
 	const deleteResult = await supabaseAdmin.auth.admin.deleteUser(user_id)
 
-	if(deleteResult.error?.message){
+	if(deleteResult.error?.message)
+	{
 		return JSON.stringify(deleteResult)
-	} else {
+	}
+	else
+	{
 		const supabase = await createSupbaseServerClient()
 		const result = await supabase.from("member").delete().eq("id", user_id);
 
