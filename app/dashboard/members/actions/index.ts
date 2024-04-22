@@ -14,7 +14,7 @@ export async function createMember(data: {
 }) {
 	const {data: userSession} = await readUserSession();
 	if(userSession.session?.user.user_metadata.role != "admin"){
-		return JSON.stringify ({
+		return JSON.stringify({
 			error: {message: "You are not allowed to do this!"
 		}});
 	}
@@ -40,7 +40,8 @@ export async function createMember(data: {
 		.from("member")
 		.insert({
 			name: data.name,
-			id: createResult.data.user?.id
+			id: createResult.data.user?.id,
+			email: data.email
 		})
 		if(memberResult.error?.message){
 			return JSON.stringify(memberResult)
