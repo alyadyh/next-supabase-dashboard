@@ -62,8 +62,18 @@ export async function createMember(data: {
 
 }
 
-export async function updateMemberById(id: string) {
-	console.log("update member");
+export async function updateMemberBasicById(
+	id: string, 
+	data: {
+		name: string;
+	})
+{
+	const supabase = await createSupbaseServerClient();
+	const result = await supabase.from("member").update(data).eq("id", id)
+
+	revalidatePath("/dashboard/members");
+	
+	return JSON.stringify(result);
 }
 
 export async function deleteMemberById(user_id: string) {
