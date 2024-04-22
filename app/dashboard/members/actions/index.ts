@@ -76,6 +76,40 @@ export async function updateMemberBasicById(
 	return JSON.stringify(result);
 }
 
+export async function updateMemberAdvanceById(
+	permission_id: string,
+	user_id: string,
+	data: {
+		role: "admin" | "user";
+		status: "active" | "resigned";
+	}
+){
+	const {data: userSession} = await readUserSession();
+	if(userSession.session?.user.user_metadata.role != "admin"){
+		return JSON.stringify({
+			error: {message: "You are not allowed to do this!"
+		}});
+	}
+
+	const supabaseAdmin = await createSupbaseAdmin();
+
+	const updateResult = await supabaseAdmin.auth.admin.updateUserById(
+		user_id,
+  		{ user_metadata: { role: data.role } }
+	)
+
+	if (updateResult.error?.message) {
+		return JSON.stringify(updateResult);
+	} else {
+		const supabase = await createSupbaseServerClient();
+		const result = await supabase.from("permission").update(data).eq("id", permission_id)
+	
+		revalidatePath("/dashboard/members");
+	
+		return JSON.stringify(result);
+	}
+}
+
 export async function deleteMemberById(user_id: string) {
 	// admin only
 	const {data: userSession} = await readUserSession();
