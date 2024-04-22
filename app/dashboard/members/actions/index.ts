@@ -55,7 +55,7 @@ export async function createMember(data: {
 				status: data.status
 			});
 
-			revalidatePath("/dashboard/members");
+			revalidatePath("/dashboard/member");
 			return JSON.stringify(permissionResult)
 		}
 	}
@@ -71,7 +71,7 @@ export async function updateMemberBasicById(
 	const supabase = await createSupbaseServerClient();
 	const result = await supabase.from("member").update(data).eq("id", id)
 
-	revalidatePath("/dashboard/members");
+	revalidatePath("/dashboard/member");
 	
 	return JSON.stringify(result);
 }
@@ -104,8 +104,51 @@ export async function updateMemberAdvanceById(
 		const supabase = await createSupbaseServerClient();
 		const result = await supabase.from("permission").update(data).eq("id", permission_id)
 	
-		revalidatePath("/dashboard/members");
+		revalidatePath("/dashboard/member");
 	
+		return JSON.stringify(result);
+	}
+}
+
+export async function updateMemberAccountById(
+	user_id: string,
+	data: {
+		email: string;
+		password?: string | undefined;
+		confirm?: string | undefined;
+	}
+){
+	const {data: userSession} = await readUserSession();
+	if(userSession.session?.user.user_metadata.role != "admin"){
+		return JSON.stringify({
+			error: {message: "You are not allowed to do this!"
+		}});
+	}
+
+	let updateObject: {
+		email: string,
+		password?: string | undefined,
+	} = {email: data.email};
+
+	if(data.password){
+		updateObject["password"] = data.password;
+	}
+
+	const supabaseAdmin = await createSupbaseAdmin();
+
+	const updateResult = await supabaseAdmin.auth.admin.updateUserById(
+		user_id,
+		updateObject
+	)
+
+	if(updateResult.error?.message){
+		return JSON.stringify(updateResult)
+	} else {
+		const supabase = await createSupbaseServerClient()
+		const result = await supabase.from("member").update({email: data.email}).eq("id", user_id);
+
+		revalidatePath("/dashboard/member");
+
 		return JSON.stringify(result);
 	}
 }
@@ -129,7 +172,7 @@ export async function deleteMemberById(user_id: string) {
 		const supabase = await createSupbaseServerClient()
 		const result = await supabase.from("member").delete().eq("id", user_id);
 
-		revalidatePath("/dashboard/members");
+		revalidatePath("/dashboard/member");
 
 		return JSON.stringify(result);
 	}
