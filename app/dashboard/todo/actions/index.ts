@@ -1,7 +1,7 @@
 "use server";
 
 import { readUserSession } from "@/lib/actions";
-import { createSupbaseServerClient } from "@/lib/supabase";
+import { createSupbaseAdmin, createSupbaseServerClient } from "@/lib/supabase";
 import { revalidatePath, unstable_noStore } from "next/cache";
 
 export async function createTodo(
@@ -34,7 +34,15 @@ export async function updateTodoById(
 	return JSON.stringify(result);
 }
 
-export async function deleteTodoById(id: string) {}
+export async function deleteTodoById(id: string) {
+	const supabase = await createSupbaseServerClient();
+	const result = await supabase.from("daily-todo").delete().eq("id", id);
+	console.log("deleteTodoById berhasil");
+	
+	revalidatePath("/dashboard/todo");
+	
+	return JSON.stringify(result);
+}
 
 export async function readTodos() {
 	unstable_noStore();
