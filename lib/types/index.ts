@@ -11,3 +11,17 @@ export type IPermission = {
         email: string;
     }
 }
+
+export type ITodo = {
+    id: string;
+    created_at: string;
+    title: string;
+    completed: boolean;
+    member_id: string;
+    member: {
+        id: string;
+        created_at: string;
+        name: string;
+        email: string;
+    }
+}
