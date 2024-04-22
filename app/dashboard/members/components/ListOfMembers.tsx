@@ -16,7 +16,7 @@ export default async function ListOfMembers() {
 
 	return (
 		<div className="dark:bg-inherit bg-white mx-2 rounded-sm">
-			{(permissions as unknown as IPermission[])?.map((permission, index) => {
+			{(permissions as IPermission[])?.map((permission, index) => {
 				return (
 					<div
 						className=" grid grid-cols-5  rounded-sm  p-3 align-middle font-normal"
