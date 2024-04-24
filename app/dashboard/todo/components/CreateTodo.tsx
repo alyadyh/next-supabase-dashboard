@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import DailogForm from "./DialogForm";
 import TodoForm from "./TodoForm";
-import { ITodo } from "@/lib/types";
+import { IPermission, ITodo } from "@/lib/types";
 
 export default function CreateTodo({todo}: {todo: ITodo}) {
 	return (

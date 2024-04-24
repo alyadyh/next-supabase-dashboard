@@ -48,5 +48,5 @@ export async function readTodos() {
 	unstable_noStore();
 	const supabase = await createSupbaseServerClient()
 
-	return await supabase.from("daily-todo").select("*")
+	return await supabase.from("daily-todo").select("*, member(*)")
 }

@@ -29,7 +29,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useTransition } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { cn } from "@/lib/utils";
-import { ITodo } from "@/lib/types";
+import { IPermission, ITodo } from "@/lib/types";
 
 const FormSchema = z.object({
 	title: z.string().min(10, {
