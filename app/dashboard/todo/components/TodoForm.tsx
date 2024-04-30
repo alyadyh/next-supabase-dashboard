@@ -38,7 +38,7 @@ const FormSchema = z.object({
 	completed: z.boolean(),
 });
 
-export default function TodoForm({isEdit, todo}: {isEdit:boolean, todo:ITodo}) {
+export default function TodoForm({isEdit, todo, member}: {isEdit:boolean, todo:ITodo, member:IPermission}) {
 	const [isPending, startTransition] = useTransition()
 	
 	const form = useForm<z.infer<typeof FormSchema>>({
@@ -51,7 +51,7 @@ export default function TodoForm({isEdit, todo}: {isEdit:boolean, todo:ITodo}) {
 
 	const handleCreateMember = (data: z.infer<typeof FormSchema>) => {
 		startTransition(async () => {
-			const {error} = JSON.parse(await createTodo(data));
+			const {error} = JSON.parse(await createTodo(member.member_id, data));
 
 			if(error?.message){
 				toast({

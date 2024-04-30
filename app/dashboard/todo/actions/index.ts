@@ -5,6 +5,7 @@ import { createSupbaseAdmin, createSupbaseServerClient } from "@/lib/supabase";
 import { revalidatePath, unstable_noStore } from "next/cache";
 
 export async function createTodo(
+	id: string, 
 	data: {
 		title: string;
 		completed: Boolean;
@@ -12,7 +13,7 @@ export async function createTodo(
 ) {
 	const supabase = await createSupbaseServerClient();
 
-	const result = await supabase.from("daily-todo").insert(data).single()
+	const result = await supabase.from("daily-todo").insert({data, member_id: id}).single()
 
 	revalidatePath("/dashboard/todo");
 
